@@ -1,0 +1,100 @@
+if Menu == True: # Отображение меню игры
+        #### Обнулить данные игры ####
+        I = []
+        TrueInput = []
+        UserInput = []
+        ##############
+        Com = Draw_menu(Mouse_pos,Mouse_press) # Вызов функции отображения меню
+        if Com == 1: # Запускает игру если была нажата кнопка "Судоку" и закрывает меню, так же включает случайную генерацию чисел
+            Menu = False
+            Sudoku = True
+            number = True
+        if Com == 2: # Запускает настройки если была нажата кнопка "Настройки" и закрывает меню
+            Menu = False
+            Settings = True
+        if Com == 3: # Кнопка выхода из игры
+            Main = False
+        if Com == 4: # Кнопка загрузки данных из сохранения
+            LoadData = LoadSave()
+            if LoadData != None: # Если данных нету ничего не делает
+                #### Присваивает переменным сохранённые значения ####
+                I = LoadData[0]
+                UserInput = LoadData[1]
+                dif = LoadData[2]
+                Num = LoadData[3]
+                ####################
+                #### Запускает игру ####
+                Menu = False
+                Sudoku = True
+                number = False
+                ##############
+        Mouse_press = (False, False, False) # Скидывает нажатую кнопку мыши на не нажатую кнопку
+    elif Menu == False: # Включает кнопки сохранения и выхода в меню
+        Com = Exit_B(Mouse_pos,Mouse_press)
+        if Com == 1: # Если нажата кнопка выхода в меню, выключает игру и открывает меню
+            Menu = True
+            Sudoku = False
+            Settings = False
+        if Com == 2 and Sudoku == True: # Если нажата кнопка сохранения, сохраняет данные с помощью функции Save()
+            Save(I, UserInput, dif, Num)
+
+    if Settings == True: # Открывает настройки
+        seting = Set(Mouse_pos,Mouse_press)
+
+    if Sudoku == True: # Запускает игру
+        XY = Sudoku_draw(Mouse_pos,Mouse_press) # Отображает игровое поле и получает координаты игрового поля
+        X = XY[1]
+        Y = XY[2]
+        XY = XY[0]
+        if number == True:
+            Num = Numbers(X,Y,XY) # Генерирует сетку чисел и закрывается, что бы числа не были сгенерированы повторно. Выдаёт координату и число
+            number = False
+        for i in Num: # Берет по одной координате с числом
+            xy = i[0]
+            n = i[1]
+            ii = Num.index(i) # Узнаёт индекс числа
+            if not ii in I: # Проверяет нужно ли отображать текущее число
+                font = pygame.font.SysFont('serif', 48)
+                text = font.render(str(n), False, (Black)) # Отображение текущего числа
+                x = xy[0]
+                y = xy[1]
+                Screen.blit(text, (x+26,y+18))
+                xy = x, y
+                Nums.append(xy) # Добавляет координату числа для проверки выделеной клетки
+        if Selected != 0: # Проверяет есть ли выделеная клетка
+            if not Selected in Nums: # Проверяет, не совпадает ли выделеная клетка с координатой числа
+                pygame.draw.rect(Screen, (Silver1), ((Selected), (80, 80))) # Отображает выделеную клетку
+                if not Input == 0: # Проверяет, ввёл ли игрок число
+                    User = Selected,Input # Присваивает числу игрока координату выделеной клетки
+                    UserInput.append(User) # Сохраняет число игрока в список
+                    for i in UserInput: # Проверяет поменял ли игрок число в этой же клетке, если поменял, удаляет старое число
+                        ii = UserInput.index(i)
+                        Sel = i[0]
+                        inp = i[1]
+                        IS = Sel,inp
+                        if Sel == Selected and inp != Input:
+                            UserInput.remove(IS)
+
+        for u in UserInput: # Отображает число игрока
+            xy1 = u[0]
+            x,y = xy1
+            n1 = u[1]
+            font = pygame.font.SysFont('serif', 48)
+            text = font.render(str(n1), False, (Red))
+            Screen.blit(text, (x+26,y+18))
+            if u in Num: # Сравнивает число игрока с верным числом
+                if not u in TrueInput: # Если число верное, добавляет его в список верных чисел
+                    TrueInput.append(u)
+                if len(TrueInput) == len(I): # Если все числа введены верно, вызывает функцию Win()
+                    Settings = False
+                    Sudoku = False
+                    Menu = Win()
+                    pygame.display.update() # Обновляет экран что бы появилась надпись "Победа"
+                    time.sleep(2) # Задерживает цикл на 2 секунды
+
+
+    Mouse_press = (False, False, False) # Скидывает нажатыве кнопки мыши
+    pygame.init()
+    pygame.display.flip() # Обновляет экран для отображения новых данных
+
+pygame.quit()
