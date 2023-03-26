@@ -1,0 +1,78 @@
+ Col = [(1, 4, 7, 2, 5, 8, 3, 6, 9), # Игровая сетка до перестановки чисел случайным образом
+           (2, 5, 8, 3, 6, 9, 4, 7, 1),
+           (3, 6, 9, 4, 7, 1, 5, 8, 2),
+           (4, 7, 1, 5, 8, 2, 6, 9, 3),
+           (5, 8, 2, 6, 9, 3, 7, 1, 4),
+           (6, 9, 3, 7, 1, 4, 8, 2, 5),
+           (7, 1, 4, 8, 2, 5, 9, 3, 6),
+           (8, 2, 5, 9, 3, 6, 1, 4, 7),
+           (9, 3, 6, 1, 4, 7, 2, 5, 8)]
+
+    def dif1(dif): # функция случайно перемешивает числа в сетке
+        for i in range(dif):
+            i = random.randint(0, 8)
+            i1 = random.randint(0, 8)
+            Col[i], Col[i1] = Col[i1], Col[i]
+        return Col # Выдаёт перемешенную сетку
+    Col = dif1(dif)
+    def Rajc(Col): # Находит значения всех районов сетки
+        Raj = [] # используется для проверки сетки на одинаковые числа
+        R = []
+        for i in range(9):
+            for c in Col:
+                if i in [0, 3, 6]:
+                    c = c[0:3]
+                    for k in c:
+                        R.append(k)
+                        if len(R) == 9:
+                            Raj.append(tuple(R))
+                            R = []
+                            break
+        return Raj # Выдаёт значения районов сетки
+    Raj = Rajc(Col)
+    H = True
+    while H: # Проверяет наличие одинаковых чисел в районе, если есть одинаковые числа, то снова перемешивает числа до момента пока в во всех районах числа не будут повторяться
+        o = 0
+        for i in range(9):
+            L = Raj[i]
+            for j in L:
+                ii = L.count(j)
+                if ii >= 2:
+                    Col = dif1(dif)
+                    Raj = Rajc(Col)
+                if ii == 1:
+                    o += 1
+        if o == 81:
+            break
+
+    num = [] # используется для записи всех чисел в один список
+    for c in Col:
+        for i in range(9):
+            num.append(c[i])
+    xyc = [] # Используется за записи всех чисел с координатами клеток игрового поля
+    for i in XY:
+        for n in num:
+            XYC = i,n # Присваивает числам сетки координату по порядку
+            xyc.append(XYC)
+            ni = num.index(n)
+            del num[ni] # Удаляет числа которые уже записаны с координатой
+            break
+    return xyc # Возврощает числа с координатой
+def Set(MP,Click): # Отображает окно настроек
+    global dif
+    Rect_pos = [(300, 100),(500,100),(700,100),(100,100)]
+    Rect_Size = 200, 55
+    for i in Rect_pos: # Отображает кнопки
+        MC = Check_MousePos(MP,i,Rect_Size)
+        if MC == True:
+            pygame.draw.rect(Screen, (Silver), ((90,90), (815,75)))
+    for i in Rect_pos[0:3]:
+        MC = Check_MousePos(MP, i, Rect_Size) # Проверка положения курсора
+        if MC == True and Click == (True,False,False):
+            Com = CheckPressed(4,Click,MC,i) # Проверка нажатой клавиши мыши, проверяет кнопки изменения сложности игры
+            if Com == 1:
+                dif = dif_min
+            if Com == 2:
+                dif = Defualt_dif
+            if Com == 3:
+                dif = dif_max
