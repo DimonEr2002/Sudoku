@@ -1,0 +1,55 @@
+Main = True # Основной цикл
+number = False # Для одноразовой генерации чисел
+Mouse_press = (False,False,False)  # Кнопки мыши (ЛКМ, ПКМ, СКМ)
+#### Сложность игры ####
+dif = 80
+dif_min = 50
+Defualt_dif = 80
+dif_max = 150
+########################
+Selected = 0 # В этой переменно будут храниться выделенные игроком клетки
+SelN = 0
+Num = []
+I = [] # Для хранения индексов скрытых чисел
+UserInput = [] # Числа которые ввёл игрок
+TrueInput = [] # Верные числа которые ввёл игрок
+keys = [49,50,51,52,53,54,55,56,57, # Keys 1-9
+    1073741913,1073741914,1073741915,1073741916,1073741917,1073741918,1073741919,1073741920,1073741921] # keys NUM 1-9
+while Main: # Основной цикл
+    Input = 0 # Число которое вводит игрок (0 - для того что бы старое число не сохранилось)
+    Nums = [] # Временно сохраняет координаты без чисел (Нужен для отображения выделеной клетки)
+    Com = None # Принимает команду от функции CheckPressed()
+    Screen.fill((DarkGray)) # Отображает фон окна
+    events = pygame.event.get() # Действия игрока
+    Mouse_pos = pygame.mouse.get_pos() # Координаты курсора
+    for event in events: # Проверка действий игрока
+        if event.type == pygame.KEYDOWN: # Проверка нажатую кнопку на клавиатуре
+            key = event.key # Кнопка которая была нажата игроком
+            #### Сравнение нажатой кнопки с кнопками в списке ###
+            if key in keys:
+                if key == 49 or key == 1073741913:
+                    Input = 1
+                if key == 50 or key == 1073741914:
+                    Input = 2
+                if key == 51 or key == 1073741915:
+                    Input = 3
+                if key == 52 or key == 1073741916:
+                    Input = 4
+                if key == 53 or key == 1073741917:
+                    Input = 5
+                if key == 54 or key == 1073741918:
+                    Input = 6
+                if key == 55 or key == 1073741919:
+                    Input = 7
+                if key == 56 or key == 1073741920:
+                    Input = 8
+                if key == 57 or key == 1073741921:
+                    Input = 9
+                ################################
+        if event.type == pygame.MOUSEBUTTONDOWN: # Проверка нажатой кнопки мыши
+            Mouse_press = pygame.mouse.get_pressed() # Нажатая кнопка мыши
+        if event.type == pygame.QUIT: # Проверка выхода из игры (Нажатый крестик на самом окне игры)
+            Sudoku = False
+            Menu = False
+            Settings = False
+            Main = False
