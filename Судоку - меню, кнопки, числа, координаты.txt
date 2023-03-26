@@ -1,0 +1,128 @@
+def Check_MousePos(MP,Pos,S): # Функция проверяет находится ли курсор на нужных координатах
+    if Pos[1]+S[1] >= MP[1] >= Pos[1] and Pos[0]+S[0] >= MP[0] >= Pos[0]:
+        return True
+def CheckPressed(Locate,Click,Check,i): # Функция проверяет нажатую клавишу, если клавиша нажата, возврощает определённое значение для следующих действий
+    if Locate == 1: # От меню
+        if Check == True and Click[0] == True:
+            if i == (10, 10):
+                return 1
+            if i == (10,65):
+                return 2
+            if i == (10,120):
+                return 3
+            if i == (215,10):
+                return 4
+    if Locate == 2: # От кнопки возврата в меню и сохранения
+        if Check == True and Click[0] == True:
+            if i == (10, 840):
+                return 1
+            if i == (215, 840):
+                return 2
+    if Locate == 4: # От настроек
+        if Check == True and Click[0] == True:
+            if i == (300, 100):
+                return 1
+            if i == (500, 100):
+                return 2
+            if i == (700, 100):
+                return 3
+def Draw_menu(MP,Click): # Отображение экрана меню
+    pygame.font.init()
+    font = pygame.font.Font(None, 48)
+    text = font.render("Sudoku", False,(Black))
+    text1 = font.render("Settings", False, (Black))
+    text2 = font.render("Exit", False, (Black))
+    text3 = font.render("Load save", False, (Black))
+    Pos = [(10, 10),(10, 65),(10, 120),(215,10)]
+    TPos = [(15, 10), (15, 66), (15, 120),(217,10)]
+    Bs = 200,50
+    for i in Pos: # Цикл отображает кнопки и текст в меню так же отвечает за смену цвета на кнопках, когда курсор на кнопке
+        color = DimGrey
+        Check = Check_MousePos(MP,i,Bs) # Проверка положения курсора
+        Com = CheckPressed(1,Click,Check,i) # Проверка нажатой клавиши
+        if Check == True:
+            color = Silver
+        pygame.draw.rect(Screen,(color),((i),(Bs))) # Отрисовка кнопки
+        # Отрисовка текста
+        Screen.blit(text, (TPos[0]))
+        Screen.blit(text1, (TPos[1]))
+        Screen.blit(text2, (TPos[2]))
+        Screen.blit(text3, (TPos[3]))
+        if Com == 1 or Com == 2 or Com == 3 or Com == 4: # Возврат команды от нажатой кнопки, если кнопка нажата
+            return Com
+def Exit_B(MP,Click): # Отображение кнопок Menu и Save
+    pygame.font.init()
+    font1 = pygame.font.Font(None, 48)
+    text = font1.render("Menu", False,(Black))
+    text1 = font1.render("Save", False,(Black))
+    Pos = [(10,size[1]-60),(215,size[1]-60)]
+    TPos = [(15,size[1]-60),(220,size[1]-60)]
+    Bs = 200,50
+    for i in Pos:
+        if Sudoku == True: # Если игра запущена отображает кнопку Save и Menu
+            color = DimGrey
+            Check = Check_MousePos(MP, i, Bs)
+            Com = CheckPressed(2, Click, Check, i)
+            if Check == True:
+                color = Silver
+            pygame.draw.rect(Screen,(color),((i),(Bs)))
+            Screen.blit(text, (TPos[0]))
+            Screen.blit(text1, (TPos[1]))
+            if Com != None: # Возврощает команду если конпка была нажата
+                return Com
+        if Settings == True and i == Pos[0]: # Если запущены настройки отображает только одну кнопку
+            color = DimGrey
+            Check = Check_MousePos(MP, i, Bs)
+            Com = CheckPressed(2, Click, Check, i)
+            if Check == True:
+                color = Silver
+            pygame.draw.rect(Screen, (color), ((i), (Bs)))
+            Screen.blit(text, (TPos[0]))
+            if Com != None: # Возврощает команду если конпка была нажата
+                return Com
+def Sudoku_draw(MP,Click): # отрисовка игрового поля и вычисление координат игрового поля
+    global Selected,SelN
+    Rect_pos = [(360,100),(357,97)] # Координаты начальной точки
+    Rect_Size = [(720,720),(725,725)] # Размер игрового поля
+    pygame.draw.rect(Screen, (Black), ((Rect_pos[1]), (Rect_Size[1])))  # Отрисовка контура игрового поля
+    pygame.draw.rect(Screen,(Silver), ((Rect_pos[0]),(Rect_Size[0]))) # Отрисовка самого игрового поля
+    Cx = 0
+    Cy = 0
+    X = []
+    Y = []
+    XY = []
+    for x in range(359,1081,80): # Вычисляет Х от 359 до 1081 с шагом 80
+        Cx += 1
+        if Cx == 4 or Cx == 7:
+            pygame.draw.line(Screen, (Black), (x, 99), (x, 820),3) # Отрисовка Вертикальных линий на игровом поле
+        pygame.draw.line(Screen, (Black), (x, 99), (x, 820)) # Отрисовка Вертикальных линий на игровом поле
+        if len(X) <= 8:
+            X.append(x+11) # Сохранение Х в список
+        for y in range(99,821,80): # Тоже самое что и для Х
+            xy = x,y
+            Cy += 1
+            if Cy == 4 or Cy == 7:
+                pygame.draw.line(Screen, (Black), (359, y), (1080, y),3) # Отрисовка горизонтальных линий на игровом поле
+            pygame.draw.line(Screen,(Black),(359,y),(1080,y)) # Отрисовка горизонтальных линий на игровом поле
+            if len(Y) <= 8:
+                Y.append(y+11) # Сохранение Y в список
+            if len(XY) <= 80 and not y == 819:
+                xy1 = x,y
+                XY.append(xy1) # Сохранение обоих координат в список
+            js = 80,80
+            Mop = Check_MousePos(MP,xy,js) # Проверка положеня курсора, для изменения цвета в клетке под курсором
+            if Mop == True and xy[0] < 1001 and xy[1] <= 739:
+                pygame.draw.rect(Screen, (Silver1), ((xy), (80,80)))
+            if Mop == True and Click == (True,False,False): # Если кнопка нажата выделяет выделеную клетку
+                X1 = xy[0]
+                Y1 = xy[1]
+                Selected = xy # Сохраняет координату выделеной клетки
+
+    XY = XY,X,Y  # Возврощает координаты клеток в основной цикл
+    return XY
+def Numbers(X,Y,XY): # Эта функция генерирует числа в клетках используя сложность игры
+    global dif,I
+    for i in range(dif):
+        Rand = random.randint(0, 80) # Случайно генерирует числа которые будут скрыты
+        if not Rand in I:
+            I.append(Rand) # Сохраняет скрытые числа
