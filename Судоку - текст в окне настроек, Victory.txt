@@ -1,0 +1,28 @@
+#### Отображает текст в окне настроек ####
+    Text11 = 'Current difficult - '+str(dif)
+    font = pygame.font.SysFont('serif', 48)
+    text = font.render('difficult', False, (Black))
+    Screen.blit(text, (100, 100))
+    font = pygame.font.SysFont('serif', 48)
+    text = font.render(Text11, False, (Black))
+    Screen.blit(text, (400, 40))
+    pygame.draw.rect(Screen, (LightYellow), ((Rect_pos[0]), (Rect_Size)))
+    pygame.draw.rect(Screen, (Orange), ((Rect_pos[1]), (Rect_Size)))
+    pygame.draw.rect(Screen, (Red), ((Rect_pos[2]), (Rect_Size)))
+    font = pygame.font.SysFont('serif', 48)
+    text = font.render('Easy', False, (Black))
+    Screen.blit(text, (310, 100))
+    font = pygame.font.SysFont('serif', 48)
+    text = font.render('Medium', False, (Black))
+    Screen.blit(text, (510, 100))
+    font = pygame.font.SysFont('serif', 48)
+    text = font.render('Hard', False, (Black))
+    Screen.blit(text, (710, 100))
+    ############################################
+def Win(): # Отображает надписть "Victory# когда игрок все сделал верно, завершает игру
+    x = 650
+    y = 40
+    font = pygame.font.SysFont('serif', 48)
+    text = font.render('Victory', False, (Red))
+    Screen.blit(text, (x , y))
+    return True
